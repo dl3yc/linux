@@ -16,4 +16,14 @@ config AD8366
 	  To compile this driver as a module, choose M here: the
 	  module will be called ad8366.
 
+config PGA2310
+	tristate "Burr Brown PGA2310"
+	depends on SPI
+        help
+          Say yes here to build support for Burr Brown PGA2310
+          SPI Stereo Audio Volume Control.
+
+          To compile this driver as a module, choose M here: the
+          module will be called pga2310.
+
 endmenu
