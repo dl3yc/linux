@@ -379,6 +379,7 @@ static ssize_t iio_read_channel_info(struct device *dev,
 	switch (ret) {
 	case IIO_VAL_INT:
 		return sprintf(buf, "%d\n", val);
+	case IIO_VAL_INT_MINUS_MICRO_DB:
 	case IIO_VAL_INT_PLUS_MICRO_DB:
 		scale_db = true;
 	case IIO_VAL_INT_PLUS_MICRO:
@@ -475,16 +476,21 @@ static ssize_t iio_write_channel_info(struct device *dev,
 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
 	int ret, fract_mult = 100000;
 	int integer, fract;
+	int sign;
 
 	/* Assumes decimal - precision based on number of digits */
 	if (!indio_dev->info->write_raw)
 		return -EINVAL;
-
+	sign = 1;
 	if (indio_dev->info->write_raw_get_fmt)
 		switch (indio_dev->info->write_raw_get_fmt(indio_dev,
 			this_attr->c, this_attr->address)) {
 		case IIO_VAL_INT_PLUS_MICRO:
 			fract_mult = 100000;
+			break;
+		case IIO_VAL_INT_MINUS_MICRO:
+			fract_mult = 100000;
+			sign = (buf[0] == '-') ? -1 : 1;
 			break;
 		case IIO_VAL_INT_PLUS_NANO:
 			fract_mult = 100000000;
@@ -493,12 +499,12 @@ static ssize_t iio_write_channel_info(struct device *dev,
 			return -EINVAL;
 		}
 
-	ret = iio_str_to_fixpoint(buf, fract_mult, &integer, &fract);
+	ret = iio_str_to_fixpoint(&buf[(sign == -1) ? 1 : 0], fract_mult, &integer, &fract);
 	if (ret)
 		return ret;
 
 	ret = indio_dev->info->write_raw(indio_dev, this_attr->c,
-					 integer, fract, this_attr->address);
+					 sign * integer, sign * fract, this_attr->address);
 	if (ret)
 		return ret;
 
