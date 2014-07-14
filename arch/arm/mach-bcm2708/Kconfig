@@ -38,4 +38,12 @@ config BCM2708_SPIDEV
 	default y
 	help
 	  Binds spidev driver to the SPI0 master
+
+config STAGEPI
+	bool "enable StagePI devices"
+	depends on MACH_BCM2708
+	depends on SPI
+	depends on !BCM2708_SPIDEV
+	depends on I2C
+
 endmenu

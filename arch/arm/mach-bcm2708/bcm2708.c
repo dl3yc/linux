@@ -568,6 +568,30 @@ static struct spi_board_info bcm2708_spi_devices[] = {
 };
 #endif
 
+#ifdef CONFIG_STAGEPI
+static struct spi_board_info stagepi_spi_devices[] = {
+#ifdef CONFIG_PGA2310
+        {
+                .modalias = "pga2310",
+                .max_speed_hz = 500000,
+                .bus_num = 0,
+                .chip_select = 0,
+                .mode = SPI_MODE_0,
+        }
+#endif
+#ifdef CONFIG_SPI_SPIDEV
+        , {
+        	.modalias = "spidev",
+                .max_speed_hz = 500000,
+                .bus_num = 0,
+                .chip_select = 1,
+                .mode = SPI_MODE_0,
+        }
+#endif
+};
+#endif
+
+
 static struct resource bcm2708_bsc0_resources[] = {
 	{
 		.start = BSC0_BASE,
@@ -634,6 +658,17 @@ static struct platform_device bcm2708_i2s_device = {
 	.id = 0,
 	.num_resources = ARRAY_SIZE(bcm2708_i2s_resources),
 	.resource = bcm2708_i2s_resources,
+};
+#endif
+
+#ifdef CONFIG_STAGEPI
+static struct i2c_board_info __initdata stagepi_i2c_devices[] = {
+        {
+                I2C_BOARD_INFO("pca9535", 0x20)
+        },
+        {
+                I2C_BOARD_INFO("adc081c", 0x50)
+        }
 };
 #endif
 
@@ -843,6 +878,11 @@ void __init bcm2708_init(void)
         i2c_register_board_info(1, snd_pcm512x_i2c_devices, ARRAY_SIZE(snd_pcm512x_i2c_devices));
 #endif
 
+#ifdef CONFIG_STAGEPI
+	i2c_register_board_info(1, stagepi_i2c_devices, ARRAY_SIZE(stagepi_i2c_devices));
+	spi_register_board_info(stagepi_spi_devices,
+                        ARRAY_SIZE(stagepi_spi_devices));
+#endif
 
 	for (i = 0; i < ARRAY_SIZE(amba_devs); i++) {
 		struct amba_device *d = amba_devs[i];
