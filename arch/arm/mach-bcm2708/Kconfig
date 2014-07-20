@@ -17,6 +17,13 @@ config BCM2708_GPIO
 	help
 	  Include support for the Broadcom(R) BCM2708 gpio.
 
+config BCM2708_MIDI
+        bool "BCM2708 midi support"
+        depends on MACH_BCM2708
+        default y
+        help
+          Include support for the Broadcom(R) BCM2708 midi.
+
 config BCM2708_VCMEM
 	bool "Videocore Memory"
 	depends on MACH_BCM2708

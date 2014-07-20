@@ -307,11 +307,7 @@ static struct plat_serial8250_port bcm2708_uart1_platform_data[] = {
 };
 
 static struct platform_device bcm2708_uart1_device = {
-	.name = "serial8250",
-	.id = PLAT8250_DEV_PLATFORM,
-	.dev = {
-		.platform_data = bcm2708_uart1_platform_data,
-		},
+	.name = "bcm2708-midi",
 };
 
 static struct resource bcm2708_usb_resources[] = {
