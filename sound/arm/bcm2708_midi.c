@@ -67,7 +67,7 @@ struct bcm2708_midi {
 static void bcm2708_midi_activate_irq(void)
 {
 	/* enable transmit interrupt */
-	 writel(0x01, __io_address(UART1_BASE) + UART1IER);
+	 writel(0x02, __io_address(UART1_BASE) + UART1IER);
 }
 
 static void bcm2708_midi_deactivate_irq(void)
