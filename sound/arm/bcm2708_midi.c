@@ -109,7 +109,7 @@ static int bcm2708_midi_init(void)
 	/* set baudrate to 31.25kBd */
 	writel(UART1_CLK/(BCM2708_MIDI_BAUDRATE*8)-1, __io_address(UART1_BASE) + UART1BAUD);
 	/* set UART to 8-bit mode */
-	writel(0x01, __io_address(UART1_BASE) + UART1LCR);
+	writel(0x03, __io_address(UART1_BASE) + UART1LCR);
 	/* flush transmit UART FIFO */
 	writel(0x04, __io_address(UART1_BASE) + UART1IIR);
 	/* set GPIO14 as TXD of UART1 */
