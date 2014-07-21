@@ -41,8 +41,8 @@
 #define ALT5		0x02
 #define UART1EN		0x04
 #define UART1IO		0x40
-#define UART1IIR	0x44
-#define UART1IER	0x48
+#define UART1IER	0x44
+#define UART1IIR	0x48
 #define UART1LCR	0x4C
 #define UART1CNTL	0x60
 #define UART1STAT	0x64
@@ -67,13 +67,13 @@ struct bcm2708_midi {
 static void bcm2708_midi_activate_irq(void)
 {
 	/* enable transmit interrupt */
-	 writel(0x01, __io_address(UART1_BASE) + UART1IIR);
+	 writel(0x01, __io_address(UART1_BASE) + UART1IER);
 }
 
 static void bcm2708_midi_deactivate_irq(void)
 {
 	/* disable transmit interrupt */
-	 writel(0x00, __io_address(UART1_BASE) + UART1IIR);
+	 writel(0x00, __io_address(UART1_BASE) + UART1IER);
 }
 
 static void bcm2708_midi_transmit(unsigned char *data, int num)
@@ -105,13 +105,13 @@ static int bcm2708_midi_init(void)
 	/* disable receiver */
 	writel(0x02, __io_address(UART1_BASE) + UART1CNTL);
 	/* flush recieve UART FIFO */
-	writel(0x04, __io_address(UART1_BASE) + UART1IER);
+	writel(0x04, __io_address(UART1_BASE) + UART1IIR);
 	/* set baudrate to 31.25kBd */
 	writel(UART1_CLK/(BCM2708_MIDI_BAUDRATE*8)-1, __io_address(UART1_BASE) + UART1BAUD);
 	/* set UART to 8-bit mode */
 	writel(0x01, __io_address(UART1_BASE) + UART1LCR);
 	/* flush transmit UART FIFO */
-	writel(0x04, __io_address(UART1_BASE) + UART1IER);
+	writel(0x04, __io_address(UART1_BASE) + UART1IIR);
 	/* set GPIO14 as TXD of UART1 */
 	writel((ALT5 << FSEL14), __io_address(GPIO_BASE) + GPIOFSEL(1));
 	return 0;
