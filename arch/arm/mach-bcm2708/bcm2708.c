@@ -554,22 +554,22 @@ static struct spi_board_info bcm2708_spi_devices[] = {
 #ifdef CONFIG_STAGEPI
 static struct spi_board_info stagepi_spi_devices[] = {
 #ifdef CONFIG_PGA2310
-        {
-                .modalias = "pga2310",
-                .max_speed_hz = 500000,
-                .bus_num = 0,
-                .chip_select = 0,
-                .mode = SPI_MODE_0,
-        }
+	{
+		.modalias = "pga2310",
+		.max_speed_hz = 500000,
+		.bus_num = 0,
+		.chip_select = 0,
+		.mode = SPI_MODE_0,
+	},
 #endif
 #ifdef CONFIG_SPI_SPIDEV
-        , {
-        	.modalias = "spidev",
-                .max_speed_hz = 500000,
-                .bus_num = 0,
-                .chip_select = 1,
-                .mode = SPI_MODE_0,
-        }
+	{
+		.modalias = "spidev",
+		.max_speed_hz = 500000,
+		.bus_num = 0,
+		.chip_select = 1,
+		.mode = SPI_MODE_0,
+	},
 #endif
 };
 #endif
