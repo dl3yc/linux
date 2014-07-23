@@ -56,6 +56,9 @@
 
 #include <linux/delay.h>
 
+#include <linux/input.h>
+#include <linux/gpio_keys.h>
+
 #include "bcm2708.h"
 #include "armctrl.h"
 #include "clock.h"
@@ -572,6 +575,56 @@ static struct spi_board_info stagepi_spi_devices[] = {
 	},
 #endif
 };
+#if defined(CONFIG_KEYBOARD_GPIO_POLLED) || defined(CONFIG_KEYBOARD_GPIO_POLLED_MODULE)
+static struct gpio_keys_button stagepi_gpio_keys[] = {
+	{
+		.code = KEY_PLAYPAUSE,
+		.gpio = 240,
+			.active_low = 1,
+		.desc = "PLAY",
+		.wakeup = 0,
+		.debounce_interval = 100,
+	},
+	{
+		.code = KEY_NEXTSONG,
+		.gpio = 241,
+		.active_low = 1,
+		.desc = "NEXT",
+		.wakeup = 0,
+		.debounce_interval = 100,
+	},
+	{
+		.code = KEY_PREVIOUSSONG,
+		.gpio = 242,
+		.active_low = 1,
+		.desc = "PREV",
+		.wakeup = 0,
+		.debounce_interval = 100,
+	},
+	{
+		.code = KEY_STOPCD,
+		.gpio = 243,
+		.active_low = 1,
+		.desc = "STOP",
+		.wakeup = 0,
+		.debounce_interval = 100,
+	},
+};
+
+static struct gpio_keys_platform_data stagepi_gpio_keys_data = {
+	.buttons = stagepi_gpio_keys,
+	.nbuttons = ARRAY_SIZE(stagepi_gpio_keys),
+	.poll_interval = 1,
+};
+
+static struct platform_device stagepi_gpio_keys_device = {
+	.name = "gpio-keys-polled",
+	.id = -1,
+	.dev = {
+		.platform_data = &stagepi_gpio_keys_data,
+	},
+};
+#endif
 #endif
 
 
@@ -865,6 +918,9 @@ void __init bcm2708_init(void)
 	i2c_register_board_info(1, stagepi_i2c_devices, ARRAY_SIZE(stagepi_i2c_devices));
 	spi_register_board_info(stagepi_spi_devices,
                         ARRAY_SIZE(stagepi_spi_devices));
+#if defined(CONFIG_KEYBOARD_GPIO_POLLED) || defined(CONFIG_KEYBOARD_GPIO_POLLED_MODULE)
+	bcm_register_device(&stagepi_gpio_keys_device);
+#endif
 #endif
 
 	for (i = 0; i < ARRAY_SIZE(amba_devs); i++) {
