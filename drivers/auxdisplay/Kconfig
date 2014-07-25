@@ -119,4 +119,15 @@ config CFAG12864B_RATE
 	  If you compile this as a module, you can still override this
 	  value using the module parameters.
 
+config HD44780
+	tristate "HD44780 LCD"
+	 depends on GPIOLIB
+         ---help---
+          If you have a LCD controlled by an HD44780 controller, say Y.
+
+          To compile this as a module, choose M here:
+          the module will be called hd44780.
+
+          If unsure, say N.
+
 endif # AUXDISPLAY

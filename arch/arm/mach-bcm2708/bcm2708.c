@@ -33,6 +33,7 @@
 #include <linux/module.h>
 #include <linux/spi/spi.h>
 #include <linux/w1-gpio.h>
+#include <linux/hd44780.h>
 
 #include <linux/version.h>
 #include <linux/clkdev.h>
@@ -564,7 +565,7 @@ static struct spi_board_info stagepi_spi_devices[] = {
 		.chip_select = 0,
 		.mode = SPI_MODE_0,
 	},
-#endif
+#endif /* CONFIG_PGA2310 */
 #ifdef CONFIG_SPI_SPIDEV
 	{
 		.modalias = "spidev",
@@ -573,7 +574,7 @@ static struct spi_board_info stagepi_spi_devices[] = {
 		.chip_select = 1,
 		.mode = SPI_MODE_0,
 	},
-#endif
+#endif /* CONFIG_SPI_SPIDEV */
 };
 #if defined(CONFIG_KEYBOARD_GPIO_POLLED) || defined(CONFIG_KEYBOARD_GPIO_POLLED_MODULE)
 static struct gpio_keys_button stagepi_gpio_keys[] = {
@@ -624,8 +625,31 @@ static struct platform_device stagepi_gpio_keys_device = {
 		.platform_data = &stagepi_gpio_keys_data,
 	},
 };
-#endif
-#endif
+#endif /* defined(CONFIG_KEYBOARD_GPIO_POLLED) || defined(CONFIG_KEYBOARD_GPIO_POLLED_MODULE) */
+
+#if defined(CONFIG_HD44780) || defined(CONFIG_HD44780_MODULE)
+static struct hd44780_platform_data hd44780_pdata = {
+        .gpio = {
+                .data = {251, 247, 252, 246, 253, 245, 254, 244},
+                .rw = 250,
+                .rs = 249,
+                .en = 248,
+        },
+	.init_text = "StagePi",
+        .format = {.width = 16, .height = 2},
+        .mode = HD44780_MODE_8BIT,
+        .font = HD44780_FONT_5X7,
+};
+
+static struct platform_device hd44780_device = {
+        .name = "hd44780",
+        .id = -1,
+        .dev = {
+                .platform_data = &hd44780_pdata,
+        },
+};
+#endif /* defined(CONFIG_HD44780) || defined(CONFIG_HD44780_MODULE) */
+#endif /* CONFIG_STAGEPI */
 
 
 static struct resource bcm2708_bsc0_resources[] = {
@@ -920,6 +944,9 @@ void __init bcm2708_init(void)
                         ARRAY_SIZE(stagepi_spi_devices));
 #if defined(CONFIG_KEYBOARD_GPIO_POLLED) || defined(CONFIG_KEYBOARD_GPIO_POLLED_MODULE)
 	bcm_register_device(&stagepi_gpio_keys_device);
+#endif
+#if defined(CONFIG_HD44780) || defined(CONFIG_HD44780_MODULE)
+	bcm_register_device(&hd44780_device);
 #endif
 #endif
 
